@@ -1,0 +1,66 @@
+{
+  "name": "Coretool – validate an e-invoice file",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/invoices/*.xml",
+        "options": {}
+      },
+      "name": "Read Files from Disk",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "operation": "validateEInvoice",
+        "binaryPropertyName": "data",
+        "report": false
+      },
+      "name": "Validate an E-Invoice",
+      "type": "n8n-nodes-coretool.coretool",
+      "typeVersion": 1,
+      "position": [480, 0],
+      "credentials": {
+        "coretoolApi": {
+          "id": "",
+          "name": "Coretool API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            {
+              "id": "valid",
+              "leftValue": "={{ $json.result }}",
+              "rightValue": "valid",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Is valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [720, 0]
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": { "main": [[{ "node": "Read Files from Disk", "type": "main", "index": 0 }]] },
+    "Read Files from Disk": { "main": [[{ "node": "Validate an E-Invoice", "type": "main", "index": 0 }]] },
+    "Validate an E-Invoice": { "main": [[{ "node": "Is valid?", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

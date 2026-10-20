@@ -1,0 +1,86 @@
+{
+  "name": "Coretool – create e-invoice from webhook and send by e-mail",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "coretool-invoice",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "createEInvoice",
+        "format": "zugferd",
+        "invoiceNumber": "={{ $json.body.invoice_number }}",
+        "invoiceDate": "={{ $json.body.invoice_date }}",
+        "deliveryDate": "={{ $json.body.delivery_date }}",
+        "seller": {
+          "name": "Muster Zimmerei GmbH",
+          "street": "An der Bahn 5",
+          "zip": "22844",
+          "city": "Norderstedt",
+          "country": "DE",
+          "tax_number": "11/252/12345",
+          "email": "info@coretool.de"
+        },
+        "buyer": {
+          "name": "={{ $json.body.customer_name }}",
+          "street": "={{ $json.body.customer_street }}",
+          "zip": "={{ $json.body.customer_zip }}",
+          "city": "={{ $json.body.customer_city }}",
+          "country": "DE",
+          "email": "={{ $json.body.customer_email }}"
+        },
+        "itemsInputMode": "json",
+        "itemsJson": "={{ JSON.stringify($json.body.items) }}",
+        "payment": {
+          "iban": "DE02120300000000202051",
+          "bic": "BYLADEM1001",
+          "bank_name": "Deutsche Kreditbank",
+          "due_days": 14
+        },
+        "additionalFields": {
+          "template": "modern",
+          "notes": "Thank you for your order."
+        },
+        "binaryPropertyName": "invoice"
+      },
+      "name": "Create an E-Invoice",
+      "type": "n8n-nodes-coretool.coretool",
+      "typeVersion": 1,
+      "position": [260, 0],
+      "credentials": {
+        "coretoolApi": {
+          "id": "",
+          "name": "Coretool API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "invoices@example.com",
+        "toEmail": "={{ $('Webhook').item.json.body.customer_email }}",
+        "subject": "=Invoice {{ $json.filename }}",
+        "text": "=Please find attached invoice {{ $('Webhook').item.json.body.invoice_number }} (total {{ $json.gross_total }} {{ $json.totals.currency }}).",
+        "options": {
+          "attachments": "invoice"
+        }
+      },
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [520, 0]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Create an E-Invoice", "type": "main", "index": 0 }]] },
+    "Create an E-Invoice": { "main": [[{ "node": "Send Email", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

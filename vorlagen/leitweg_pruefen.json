@@ -1,0 +1,47 @@
+{
+  "name": "Coretool – check a Leitweg-ID",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "lw", "name": "leitweg_id", "value": "04011000-1234512345-06", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set Leitweg-ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "operation": "checkLeitwegId",
+        "leitwegId": "={{ $json.leitweg_id }}"
+      },
+      "name": "Check a Leitweg-ID",
+      "type": "n8n-nodes-coretool.coretool",
+      "typeVersion": 1,
+      "position": [480, 0],
+      "credentials": {
+        "coretoolApi": {
+          "id": "",
+          "name": "Coretool API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": { "main": [[{ "node": "Set Leitweg-ID", "type": "main", "index": 0 }]] },
+    "Set Leitweg-ID": { "main": [[{ "node": "Check a Leitweg-ID", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

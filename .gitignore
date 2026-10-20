@@ -1,0 +1,15 @@
+dist
+node_modules
+node_modules.kaputt*
+*.tgz
+.n8n/
+.env
+.env.*
+_starter_ref/
+tests/out_*
+*.bak_*
+*.log
+KLICKZETTEL*
+KONKURRENZ_UND_PLAN.md
+TESTBERICHT*
+EINREICHUNG_TEXTE*

@@ -1,0 +1,66 @@
+{
+  "name": "n8n-nodes-coretool",
+  "version": "0.1.0",
+  "description": "n8n community node for the Coretool e-invoice API: create ZUGFeRD and XRechnung invoices, validate e-invoices, check Leitweg-IDs and read your usage.",
+  "license": "MIT",
+  "homepage": "https://coretool.de",
+  "keywords": [
+    "n8n-community-node-package",
+    "coretool",
+    "e-invoice",
+    "e-rechnung",
+    "zugferd",
+    "xrechnung",
+    "leitweg-id",
+    "invoice"
+  ],
+  "author": {
+    "name": "Coretool",
+    "email": "info@coretool.de",
+    "url": "https://coretool.de"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coretool-de/n8n-nodes-coretool.git"
+  },
+  "bugs": {
+    "url": "https://github.com/coretool-de/n8n-nodes-coretool/issues",
+    "email": "info@coretool.de"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "test": "node tests/run_api_tests.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/CoretoolApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Coretool/Coretool.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "0.53.2",
+    "eslint": "9.39.4",
+    "prettier": "3.8.3",
+    "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
