@@ -147,6 +147,22 @@ const BAD_KEY = 'ct_live_invalid000';
 	const out = await node.execute.call(ctx);
 	results.push({ name: 'continueOnFail puts message in json.error', ok: typeof out[0][0].json.error === 'string', info: JSON.stringify(out[0][0].json).slice(0, 160) });
 
+	// Credential test mode: replay exactly the request the credential's `test` block defines
+	// (GET /v1/auth/test with the X-API-Key header) - 200 with a valid key, 401 with an invalid one.
+	const { CoretoolApi } = require(path.join(ROOT, 'dist', 'credentials', 'CoretoolApi.credentials.js'));
+	const credReq = new CoretoolApi().test.request;
+	const credTest = async (name, key, expectStatus) => {
+		try {
+			const res = await fetch(credReq.baseURL + credReq.url, { method: credReq.method, headers: { 'X-API-Key': key } });
+			const body = (await res.text()).slice(0, 120);
+			results.push({ name, ok: res.status === expectStatus, info: `HTTP ${res.status} (expected ${expectStatus}) ${body}` });
+		} catch (e) {
+			results.push({ name, ok: false, info: String(e && e.message) });
+		}
+	};
+	await credTest('credential test endpoint (200 with valid key)', API_KEY, 200);
+	await credTest('credential test endpoint (401 with invalid key)', BAD_KEY, 401);
+
 	let fails = 0;
 	for (const r of results) {
 		if (!r.ok) fails++;
