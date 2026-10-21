@@ -44,19 +44,26 @@ The created file is written to the binary field you choose (default `data`). The
 1. Sign in at https://coretool.de and create an API key (menu **API keys**). Keys start with `ct_live_`.
 2. In n8n create a **Coretool API** credential and paste the key. The credential test calls `GET /v1/auth/test`, which does not cost a call.
 
-New keys include a few free calls; see https://coretool.de/e-rechnung-api#preise for plans.
+For trying out the node you can also create a test key (`ct_test_…`) in your account, see https://coretool.de/e-rechnung-api#testmodus. New keys include a few free calls; see https://coretool.de/e-rechnung-api#kontingent for plans.
 
 ## Compatibility
 
-Built and tested with n8n 2.x (Node.js 20+). The node uses only n8n's built-in HTTP helpers and has no runtime dependencies.
+Built and tested with n8n 2.x (last manual test: n8n 2.44.4, Node.js 22). The node uses only n8n's built-in HTTP helpers and has no runtime dependencies.
 
 ## Usage
 
-Example workflows are included in the [`vorlagen`](vorlagen) folder of the repository – import them via **Workflows → Import from file**:
+Example workflows are included in the [`examples`](https://github.com/coretool-de/n8n-nodes-coretool/tree/main/examples) folder of the repository – import them via **Workflows → Import from file**:
 
-- `webhook_rechnung_erstellen.json` – Webhook receives invoice data → Create an E-Invoice → send the PDF by e-mail
-- `datei_validieren.json` – Read a file from disk → Validate an E-Invoice → IF valid
-- `leitweg_pruefen.json` – Manual trigger → Check a Leitweg-ID
+- [`create-e-invoice-from-webhook.json`](https://github.com/coretool-de/n8n-nodes-coretool/blob/main/examples/create-e-invoice-from-webhook.json) – Webhook receives invoice data → Create an E-Invoice → send the PDF by e-mail
+- [`validate-e-invoice-file.json`](https://github.com/coretool-de/n8n-nodes-coretool/blob/main/examples/validate-e-invoice-file.json) – Read a file from disk → Validate an E-Invoice → IF valid
+- [`check-leitweg-id.json`](https://github.com/coretool-de/n8n-nodes-coretool/blob/main/examples/check-leitweg-id.json) – Manual trigger → Check a Leitweg-ID
+
+Quick start without importing:
+
+1. Add a **Manual Trigger** and a **Coretool** node, select your **Coretool API** credential.
+2. Choose **Get Usage** and click **Execute workflow** – the output shows your plan and remaining calls.
+3. Switch to **Check a Leitweg-ID** and enter e.g. `04011000-1234512345-06` – the output contains `valid: true`.
+4. Switch to **Create an E-Invoice**, fill in seller, buyer, one line item and the IBAN – the output contains the e-invoice as binary file `data` plus the totals.
 
 ### Error handling
 
@@ -83,7 +90,7 @@ Enable **Continue On Fail** on the node to receive these messages in the `error`
 npm ci
 npm run lint
 npm run build
-CORETOOL_TEST_KEY=ct_live_... npm test   # runs the API tests against api.coretool.de (uses quota of that key)
+CORETOOL_TEST_KEY=ct_test_... npm test   # runs the API tests against api.coretool.de (use a test key)
 ```
 
 Without `CORETOOL_TEST_KEY` the tests are skipped. By default the tests load a small stub instead of the `n8n-workflow` package; set `CORETOOL_REAL_N8N_WORKFLOW=1` to run them against the installed `n8n-workflow`.

@@ -21,7 +21,7 @@
         "invoiceDate": "={{ $json.body.invoice_date }}",
         "deliveryDate": "={{ $json.body.delivery_date }}",
         "seller": {
-          "name": "Muster Zimmerei GmbH",
+          "name": "Example Company GmbH",
           "street": "An der Bahn 5",
           "zip": "22844",
           "city": "Norderstedt",
