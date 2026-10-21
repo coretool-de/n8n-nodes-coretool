@@ -12,7 +12,6 @@ Coretool creates and validates German/EU e-invoices: **ZUGFeRD 2.x** (PDF with e
 [Compatibility](#compatibility)
 [Usage](#usage)
 [Resources](#resources)
-[Deutsche Kurzfassung](LIESMICH.md)
 
 ## Installation
 
